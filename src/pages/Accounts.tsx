@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus, Search } from 'lucide-react';
 import { useAccounts } from '@/hooks/useAccounts';
-import AccountCard from '../components/AccountCard';
 import AccountForm from '../components/AccountForm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -40,20 +39,28 @@ const Accounts: React.FC = () => {
     return true;
   });
 
-  const accountTypeOptions = [
-    { value: 'all', label: t('accounts.accountTypes.all') },
-    { value: 'asset', label: t('accounts.accountTypes.asset') },
-    { value: 'liability', label: t('accounts.accountTypes.liability') },
-    { value: 'equity', label: t('accounts.accountTypes.equity') },
-    { value: 'revenue', label: t('accounts.accountTypes.revenue') },
-    { value: 'expense', label: t('accounts.accountTypes.expense') },
-  ];
+  // Group accounts by type
+  const groupedAccounts = filteredAccounts.reduce((acc, account) => {
+    if (!acc[account.type]) {
+      acc[account.type] = [];
+    }
+    acc[account.type].push(account);
+    return acc;
+  }, {} as Record<string, typeof accounts>);
 
-  // Calculate totals
+  // Calculate totals for each type
   const totals = accounts.reduce((acc, account) => {
     acc[account.type] = (acc[account.type] || 0) + account.balance;
     return acc;
   }, {} as Record<string, number>);
+
+  const accountTypes = [
+    { type: 'asset', label: t('accounts.accountTypes.asset') },
+    { type: 'liability', label: t('accounts.accountTypes.liability') },
+    { type: 'equity', label: t('accounts.accountTypes.equity') },
+    { type: 'revenue', label: t('accounts.accountTypes.revenue') },
+    { type: 'expense', label: t('accounts.accountTypes.expense') },
+  ];
 
   const handleAddAccount = async () => {
     await refetch();
@@ -75,70 +82,20 @@ const Accounts: React.FC = () => {
 
       {/* Account Summary Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-        <Card>
-          <CardHeader className="pb-2">
-            <h3 className="text-sm font-medium text-muted-foreground">
-              {t('accounts.accountTypes.asset')}
-            </h3>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">
-              {formatCurrency(totals.asset || 0, 'USD', i18n.language)}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <h3 className="text-sm font-medium text-muted-foreground">
-              {t('accounts.accountTypes.liability')}
-            </h3>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">
-              {formatCurrency(totals.liability || 0, 'USD', i18n.language)}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <h3 className="text-sm font-medium text-muted-foreground">
-              {t('accounts.accountTypes.equity')}
-            </h3>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">
-              {formatCurrency(totals.equity || 0, 'USD', i18n.language)}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <h3 className="text-sm font-medium text-muted-foreground">
-              {t('accounts.accountTypes.revenue')}
-            </h3>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">
-              {formatCurrency(totals.revenue || 0, 'USD', i18n.language)}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <h3 className="text-sm font-medium text-muted-foreground">
-              {t('accounts.accountTypes.expense')}
-            </h3>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">
-              {formatCurrency(totals.expense || 0, 'USD', i18n.language)}
-            </p>
-          </CardContent>
-        </Card>
+        {accountTypes.map(({ type, label }) => (
+          <Card key={type}>
+            <CardHeader className="pb-2">
+              <h3 className="text-sm font-medium text-muted-foreground">
+                {label}
+              </h3>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">
+                {formatCurrency(totals[type] || 0, 'USD', i18n.language)}
+              </p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
       
       {/* Filters and Search */}
@@ -153,57 +110,67 @@ const Accounts: React.FC = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        
-        <Select
-          value={filterType}
-          onValueChange={(value) => setFilterType(value as typeof filterType)}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder={t('accounts.accountTypes.all')} />
-          </SelectTrigger>
-          <SelectContent>
-            {accountTypeOptions.map(option => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
       
-      {/* Accounts Grid */}
+      {/* Accounts Table */}
       <Card className="overflow-hidden">
-        <CardContent className="relative min-h-[400px] p-6">
+        <CardContent className="relative p-0">
           {isLoading ? (
-            <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+            <div className="flex h-[400px] items-center justify-center">
               <div className="text-center">
                 <div className="animate-spin h-8 w-8 rounded-full border-2 border-primary border-t-transparent"></div>
                 <p className="mt-2 text-sm text-muted-foreground">Loading accounts...</p>
               </div>
             </div>
           ) : error ? (
-            <div className="flex h-full min-h-[400px] items-center justify-center">
+            <div className="flex h-[400px] items-center justify-center p-6">
               <div className="text-center">
                 <p className="text-lg font-medium text-destructive">Error loading accounts</p>
                 <p className="text-muted-foreground">{error}</p>
               </div>
             </div>
           ) : filteredAccounts.length === 0 ? (
-            <div className="flex h-full min-h-[400px] items-center justify-center">
+            <div className="flex h-[400px] items-center justify-center p-6">
               <div className="text-center">
                 <p className="text-lg font-medium">{t('accounts.noAccounts')}</p>
                 <p className="text-muted-foreground">{t('accounts.tryAdjusting')}</p>
               </div>
             </div>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredAccounts.map((account) => (
-                <AccountCard 
-                  key={account.id} 
-                  account={account} 
-                  onClick={() => setSelectedAccount(account)}
-                />
-              ))}
+            <div className="w-full">
+              {accountTypes.map(({ type, label }) => {
+                const typeAccounts = groupedAccounts[type] || [];
+                if (typeAccounts.length === 0) return null;
+
+                return (
+                  <div key={type} className="border-b last:border-b-0">
+                    <div className="bg-muted/50 p-4">
+                      <h3 className="font-semibold">{label}</h3>
+                    </div>
+                    <div className="divide-y">
+                      {typeAccounts.map((account) => (
+                        <div
+                          key={account.id}
+                          className="flex items-center justify-between p-4 hover:bg-muted/50 cursor-pointer"
+                          onClick={() => setSelectedAccount(account)}
+                        >
+                          <div>
+                            <p className="font-medium">{account.name}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {new Date(account.created_at).toLocaleDateString(i18n.language)}
+                            </p>
+                          </div>
+                          <p className={`text-lg font-semibold ${
+                            account.balance < 0 ? 'text-red-500' : 'text-green-500'
+                          }`}>
+                            {formatCurrency(account.balance, account.currency, i18n.language)}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
         </CardContent>
