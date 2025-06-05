@@ -8,6 +8,29 @@ export async function signIn(email: string, password: string) {
   });
 
   if (error) throw error;
+
+  // After successful authentication, ensure user exists in the users table
+  if (data.user) {
+    const { data: existingUser } = await supabase
+      .from('users')
+      .select()
+      .eq('id', data.user.id)
+      .single();
+
+    if (!existingUser) {
+      // If user doesn't exist in users table, create them
+      const { error: profileError } = await supabase
+        .from('users')
+        .insert({
+          id: data.user.id,
+          email: data.user.email,
+          name: email.split('@')[0], // Use part before @ as temporary name
+        });
+
+      if (profileError) throw profileError;
+    }
+  }
+
   return data;
 }
 
