@@ -5,7 +5,6 @@ import App from './App.tsx';
 import Dashboard from './pages/Dashboard.tsx';
 import Transactions from './pages/Transactions.tsx';
 import Accounts from './pages/Accounts.tsx';
-import Profile from './pages/Profile.tsx';
 import Layout from './components/Layout.tsx';
 import './i18n';
 import './index.css';
@@ -27,10 +26,6 @@ const router = createBrowserRouter(
         {
           path: 'accounts',
           element: <Accounts />,
-        },
-        {
-          path: 'profile',
-          element: <Profile />,
         },
       ],
     },

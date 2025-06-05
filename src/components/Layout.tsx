@@ -1,12 +1,10 @@
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { BookOpenCheck, LayoutDashboard, Receipt, CreditCard, User, LogOut, Menu, X } from 'lucide-react';
-import { currentUser } from '../data/mockData';
+import { BookOpenCheck, LayoutDashboard, Receipt, CreditCard, Menu, X } from 'lucide-react';
 import { ModeToggle } from './mode-toggle';
 import { LanguageToggle } from './LanguageToggle';
 import { Button } from './ui/button';
-import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import App from '../App';
 
 const Layout: React.FC = () => {
@@ -26,7 +24,6 @@ const Layout: React.FC = () => {
     { path: '/', label: t('common.dashboard'), icon: <LayoutDashboard className="h-5 w-5" /> },
     { path: '/transactions', label: t('common.transactions'), icon: <Receipt className="h-5 w-5" /> },
     { path: '/accounts', label: t('common.accounts'), icon: <CreditCard className="h-5 w-5" /> },
-    { path: '/profile', label: t('common.profile'), icon: <User className="h-5 w-5" /> },
   ];
 
   return (
@@ -60,20 +57,6 @@ const Layout: React.FC = () => {
             <div className="hidden items-center gap-4 md:flex">
               <LanguageToggle />
               <ModeToggle />
-              <div className="flex items-center gap-2">
-                <Avatar>
-                  {currentUser.avatar ? (
-                    <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
-                  ) : (
-                    <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
-                  )}
-                </Avatar>
-                <span className="text-sm font-medium">{currentUser.name}</span>
-              </div>
-              <Button variant="outline" size="sm" className="flex items-center gap-1">
-                <LogOut className="h-4 w-4" />
-                <span>{t('common.logout')}</span>
-              </Button>
             </div>
           </div>
         </header>
@@ -100,23 +83,9 @@ const Layout: React.FC = () => {
                 ))}
               </nav>
               <div className="mt-4 border-t pt-4">
-                <div className="mb-2 flex items-center gap-2">
-                  <Avatar>
-                    {currentUser.avatar ? (
-                      <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
-                    ) : (
-                      <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
-                    )}
-                  </Avatar>
-                  <span className="text-sm font-medium">{currentUser.name}</span>
-                </div>
                 <div className="flex items-center gap-2">
                   <LanguageToggle />
                   <ModeToggle />
-                  <Button variant="outline" className="w-full justify-start gap-2">
-                    <LogOut className="h-4 w-4" />
-                    <span>{t('common.logout')}</span>
-                  </Button>
                 </div>
               </div>
             </div>
