@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
@@ -20,6 +21,8 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
   trend,
   className = '',
 }) => {
+  const { t } = useTranslation();
+
   return (
     <Card className={className}>
       <CardHeader>
@@ -40,7 +43,9 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
                 >
                   {trend.isPositive ? '+' : '-'}{Math.abs(trend.value)}%
                 </span>
-                <span className="ml-1 text-xs text-muted-foreground">from last month</span>
+                <span className="ml-1 text-xs text-muted-foreground">
+                  {t('dashboard.fromLastMonth')}
+                </span>
               </div>
             )}
           </div>

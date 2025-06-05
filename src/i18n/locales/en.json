@@ -12,9 +12,13 @@
     "cancel": "Cancel",
     "save": "Save",
     "close": "Close",
-    "viewAll": "View all"
+    "viewAll": "View all",
+    "created": "Created",
+    "lastUpdated": "Last Updated",
+    "fromLastMonth": "from last month"
   },
   "dashboard": {
+    "title": "Dashboard",
     "welcome": "Welcome to your financial overview",
     "netWorth": "Net Worth",
     "monthlyIncome": "Monthly Income",
@@ -28,7 +32,8 @@
     "assets": "Assets",
     "liabilities": "Liabilities",
     "income": "Income",
-    "expenses": "Expenses"
+    "expenses": "Expenses",
+    "fromLastMonth": "from last month"
   },
   "accounts": {
     "title": "Accounts",
@@ -60,7 +65,9 @@
     "account": "Account",
     "viewDetails": "View Details",
     "transactionDetails": "Transaction Details",
-    "transactionEntries": "Transaction Entries"
+    "transactionEntries": "Transaction Entries",
+    "debit": "Debit",
+    "credit": "Credit"
   },
   "profile": {
     "title": "Profile",

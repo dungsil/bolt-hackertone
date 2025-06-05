@@ -12,9 +12,13 @@
     "cancel": "취소",
     "save": "저장",
     "close": "닫기",
-    "viewAll": "전체보기"
+    "viewAll": "전체보기",
+    "created": "생성일",
+    "lastUpdated": "최종 수정일",
+    "fromLastMonth": "전월 대비"
   },
   "dashboard": {
+    "title": "대시보드",
     "welcome": "재무 현황에 오신 것을 환영합니다",
     "netWorth": "순자산",
     "monthlyIncome": "월 수입",
@@ -28,7 +32,8 @@
     "assets": "자산",
     "liabilities": "부채",
     "income": "수입",
-    "expenses": "지출"
+    "expenses": "지출",
+    "fromLastMonth": "전월 대비"
   },
   "accounts": {
     "title": "계좌",
@@ -60,7 +65,9 @@
     "account": "계좌",
     "viewDetails": "상세 보기",
     "transactionDetails": "거래 상세",
-    "transactionEntries": "거래 항목"
+    "transactionEntries": "거래 항목",
+    "debit": "차변",
+    "credit": "대변"
   },
   "profile": {
     "title": "프로필",
