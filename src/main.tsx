@@ -2,10 +2,13 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App.tsx';
+import AuthLayout from './components/AuthLayout.tsx';
+import Layout from './components/Layout.tsx';
+import Login from './pages/Login.tsx';
+import Register from './pages/Register.tsx';
 import Dashboard from './pages/Dashboard.tsx';
 import Transactions from './pages/Transactions.tsx';
 import Accounts from './pages/Accounts.tsx';
-import Layout from './components/Layout.tsx';
 import './i18n';
 import './index.css';
 
@@ -13,19 +16,37 @@ const router = createBrowserRouter(
   [
     {
       path: '/',
-      element: <Layout />,
+      element: <App />,
       children: [
         {
-          index: true,
-          element: <Dashboard />,
+          path: 'login',
+          element: <Login />,
         },
         {
-          path: 'transactions',
-          element: <Transactions />,
+          path: 'register',
+          element: <Register />,
         },
         {
-          path: 'accounts',
-          element: <Accounts />,
+          element: <AuthLayout />,
+          children: [
+            {
+              element: <Layout />,
+              children: [
+                {
+                  index: true,
+                  element: <Dashboard />,
+                },
+                {
+                  path: 'transactions',
+                  element: <Transactions />,
+                },
+                {
+                  path: 'accounts',
+                  element: <Accounts />,
+                },
+              ],
+            },
+          ],
         },
       ],
     },

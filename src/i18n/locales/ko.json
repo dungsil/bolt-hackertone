@@ -15,6 +15,22 @@
     "lastUpdated": "최종 수정일",
     "fromLastMonth": "전월 대비"
   },
+  "auth": {
+    "welcomeBack": "환영합니다",
+    "enterCredentials": "계속하려면 로그인하세요",
+    "email": "이메일",
+    "password": "비밀번호",
+    "name": "이름",
+    "signIn": "로그인",
+    "signUp": "회원가입",
+    "signingIn": "로그인 중...",
+    "signingUp": "가입 중...",
+    "noAccount": "계정이 없으신가요?",
+    "haveAccount": "이미 계정이 있으신가요?",
+    "createAccount": "계정 만들기",
+    "enterDetails": "시작하려면 정보를 입력하세요",
+    "checkEmail": "이메일을 확인하여 계정을 인증해주세요"
+  },
   "dashboard": {
     "title": "대시보드",
     "welcome": "재무 현황에 오신 것을 환영합니다",

@@ -1,10 +1,11 @@
 import React from 'react';
+import { Outlet } from 'react-router-dom';
 import { ThemeProvider } from './components/theme-provider';
 
-function App({ children }: { children: React.ReactNode }) {
+function App() {
   return (
     <ThemeProvider defaultTheme="system" storageKey="pawqar-theme">
-      {children}
+      <Outlet />
     </ThemeProvider>
   );
 }
