@@ -5,7 +5,7 @@ import { BookOpenCheck, LayoutDashboard, Receipt, CreditCard, Menu, X } from 'lu
 import { ModeToggle } from './mode-toggle';
 import { LanguageToggle } from './LanguageToggle';
 import { Button } from './ui/button';
-import App from '../App';
+import { ThemeProvider } from './theme-provider';
 
 const Layout: React.FC = () => {
   const location = useLocation();
@@ -27,7 +27,7 @@ const Layout: React.FC = () => {
   ];
 
   return (
-    <App>
+    <ThemeProvider defaultTheme="system" storageKey="pawqar-theme">
       <div className="flex min-h-screen flex-col">
         {/* Header */}
         <header className="sticky top-0 z-40 border-b bg-background">
@@ -126,7 +126,7 @@ const Layout: React.FC = () => {
           </main>
         </div>
       </div>
-    </App>
+    </ThemeProvider>
   );
 };
 
