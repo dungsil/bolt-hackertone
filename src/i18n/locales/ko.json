@@ -14,7 +14,9 @@
     "viewAll": "전체보기",
     "created": "생성일",
     "lastUpdated": "최종 수정일",
-    "fromLastMonth": "전월 대비"
+    "fromLastMonth": "전월 대비",
+    "actions": "작업",
+    "total": "합계"
   },
   "auth": {
     "welcomeBack": "환영합니다",
@@ -62,6 +64,7 @@
     "descriptionPlaceholder": "계좌에 대한 설명을 입력하세요",
     "noDescription": "설명이 없습니다",
     "currency": "통화",
+    "balance": "잔액",
     "selectType": "계좌 유형 선택",
     "searchAccounts": "계좌 검색...",
     "noAccounts": "계좌를 찾을 수 없습니다",

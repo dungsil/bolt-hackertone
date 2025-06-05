@@ -14,7 +14,9 @@
     "viewAll": "View all",
     "created": "Created",
     "lastUpdated": "Last Updated",
-    "fromLastMonth": "from last month"
+    "fromLastMonth": "from last month",
+    "actions": "Actions",
+    "total": "Total"
   },
   "auth": {
     "welcomeBack": "Welcome back",
@@ -62,6 +64,7 @@
     "descriptionPlaceholder": "Enter a description for this account",
     "noDescription": "No description provided",
     "currency": "Currency",
+    "balance": "Balance",
     "selectType": "Select account type",
     "searchAccounts": "Search accounts...",
     "noAccounts": "No accounts found",

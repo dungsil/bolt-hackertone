@@ -119,96 +119,118 @@ const Accounts: React.FC = () => {
         </div>
       </div>
       
-      {/* Accounts Table */}
-      <Card className="overflow-hidden">
-        <CardContent className="relative p-0">
-          {isLoading ? (
-            <div className="flex h-[400px] items-center justify-center">
-              <div className="text-center">
-                <div className="animate-spin h-8 w-8 rounded-full border-2 border-primary border-t-transparent"></div>
-                <p className="mt-2 text-sm text-muted-foreground">Loading accounts...</p>
-              </div>
-            </div>
-          ) : error ? (
-            <div className="flex h-[400px] items-center justify-center p-6">
-              <div className="text-center">
-                <p className="text-lg font-medium text-destructive">Error loading accounts</p>
-                <p className="text-muted-foreground">{error}</p>
-              </div>
-            </div>
-          ) : filteredAccounts.length === 0 ? (
-            <div className="flex h-[400px] items-center justify-center p-6">
-              <div className="text-center">
-                <p className="text-lg font-medium">{t('accounts.noAccounts')}</p>
-                <p className="text-muted-foreground">{t('accounts.tryAdjusting')}</p>
-              </div>
-            </div>
-          ) : (
-            <div className="w-full">
-              {accountTypes.map(({ type, label }) => {
-                const typeAccounts = groupedAccounts[type] || [];
-                if (typeAccounts.length === 0) return null;
+      {/* Accounts Tables */}
+      {isLoading ? (
+        <div className="flex h-[400px] items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin h-8 w-8 rounded-full border-2 border-primary border-t-transparent"></div>
+            <p className="mt-2 text-sm text-muted-foreground">Loading accounts...</p>
+          </div>
+        </div>
+      ) : error ? (
+        <div className="flex h-[400px] items-center justify-center p-6">
+          <div className="text-center">
+            <p className="text-lg font-medium text-destructive">Error loading accounts</p>
+            <p className="text-muted-foreground">{error}</p>
+          </div>
+        </div>
+      ) : filteredAccounts.length === 0 ? (
+        <div className="flex h-[400px] items-center justify-center p-6">
+          <div className="text-center">
+            <p className="text-lg font-medium">{t('accounts.noAccounts')}</p>
+            <p className="text-muted-foreground">{t('accounts.tryAdjusting')}</p>
+          </div>
+        </div>
+      ) : (
+        <div className="grid gap-6">
+          {accountTypes.map(({ type, label }) => {
+            const typeAccounts = groupedAccounts[type] || [];
+            if (typeAccounts.length === 0) return null;
 
-                return (
-                  <div key={type} className="border-b last:border-b-0">
-                    <div className="bg-muted/50 p-4">
-                      <h3 className="font-semibold">{label}</h3>
-                    </div>
-                    <div className="divide-y">
-                      {typeAccounts.map((account) => (
-                        <HoverCard key={account.id}>
-                          <HoverCardTrigger asChild>
-                            <div className="flex items-center justify-between p-4 hover:bg-muted/50">
-                              <div>
-                                <p className="font-medium">{account.name}</p>
-                                {account.description && (
-                                  <p className="mt-1 text-sm text-muted-foreground line-clamp-1">
-                                    {account.description}
-                                  </p>
-                                )}
-                              </div>
-                              <div className="flex items-center gap-4">
-                                <p className={`text-lg font-semibold ${
-                                  account.balance < 0 ? 'text-red-500' : 'text-green-500'
-                                }`}>
-                                  {formatCurrency(account.balance)}
-                                </p>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={(e) => handleEditClick(account, e)}
-                                >
-                                  {t('common.edit')}
-                                </Button>
-                              </div>
-                            </div>
-                          </HoverCardTrigger>
-                          <HoverCardContent className="w-80">
-                            <div className="space-y-2">
-                              <h4 className="font-medium">{account.name}</h4>
-                              <p className="text-sm text-muted-foreground">
+            return (
+              <Card key={type}>
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">{label}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {t('common.total')}: {formatCurrency(totals[type] || 0)}
+                    </p>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b bg-muted/50">
+                          <th className="text-left p-4 font-medium">{t('accounts.name')}</th>
+                          <th className="text-left p-4 font-medium">{t('accounts.description')}</th>
+                          <th className="text-right p-4 font-medium">{t('accounts.currency')}</th>
+                          <th className="text-right p-4 font-medium">{t('accounts.balance')}</th>
+                          <th className="text-right p-4 font-medium">{t('common.actions')}</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y">
+                        {typeAccounts.map((account) => (
+                          <tr key={account.id} className="group hover:bg-muted/50">
+                            <td className="p-4">
+                              <HoverCard>
+                                <HoverCardTrigger className="font-medium hover:text-primary cursor-pointer">
+                                  {account.name}
+                                </HoverCardTrigger>
+                                <HoverCardContent className="w-80">
+                                  <div className="space-y-2">
+                                    <h4 className="font-medium">{account.name}</h4>
+                                    <p className="text-sm text-muted-foreground">
+                                      {account.description || t('accounts.noDescription')}
+                                    </p>
+                                    <div className="pt-2">
+                                      <p className="text-sm text-muted-foreground">
+                                        {t('common.created')}: {new Date(account.created_at).toLocaleDateString()}
+                                      </p>
+                                      <p className="text-sm text-muted-foreground">
+                                        {t('common.lastUpdated')}: {new Date(account.updated_at).toLocaleDateString()}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </HoverCardContent>
+                              </HoverCard>
+                            </td>
+                            <td className="p-4">
+                              <p className="text-sm text-muted-foreground line-clamp-1">
                                 {account.description || t('accounts.noDescription')}
                               </p>
-                              <div className="pt-2">
-                                <p className="text-sm text-muted-foreground">
-                                  {t('common.created')}: {new Date(account.created_at).toLocaleDateString()}
-                                </p>
-                                <p className="text-sm text-muted-foreground">
-                                  {t('common.lastUpdated')}: {new Date(account.updated_at).toLocaleDateString()}
-                                </p>
-                              </div>
-                            </div>
-                          </HoverCardContent>
-                        </HoverCard>
-                      ))}
-                    </div>
+                            </td>
+                            <td className="p-4 text-right">
+                              <span className="text-sm font-medium">{account.currency}</span>
+                            </td>
+                            <td className="p-4 text-right">
+                              <span className={`font-medium ${
+                                account.balance < 0 ? 'text-red-500' : 'text-green-500'
+                              }`}>
+                                {formatCurrency(account.balance)}
+                              </span>
+                            </td>
+                            <td className="p-4 text-right">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => handleEditClick(account, e)}
+                                className="opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                {t('common.edit')}
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
-                );
-              })}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
       
       {/* Add Account Dialog */}
       <Dialog open={isAddingAccount} onOpenChange={setIsAddingAccount}>
