@@ -119,7 +119,7 @@ const Accounts: React.FC = () => {
         </div>
       </div>
       
-      {/* Accounts Tables */}
+      {/* Accounts Tables Grid */}
       {isLoading ? (
         <div className="flex h-[400px] items-center justify-center">
           <div className="text-center">
@@ -142,7 +142,7 @@ const Accounts: React.FC = () => {
           </div>
         </div>
       ) : (
-        <div className="grid gap-6">
+        <div className="grid gap-6 md:grid-cols-2">
           {accountTypes.map(({ type, label }) => {
             const typeAccounts = groupedAccounts[type] || [];
             if (typeAccounts.length === 0) return null;
@@ -163,18 +163,19 @@ const Accounts: React.FC = () => {
                       <thead>
                         <tr className="border-b bg-muted/50">
                           <th className="text-left p-4 font-medium">{t('accounts.name')}</th>
-                          <th className="text-left p-4 font-medium">{t('accounts.description')}</th>
                           <th className="text-right p-4 font-medium">{t('accounts.currency')}</th>
-                          <th className="text-right p-4 font-medium">{t('accounts.balance')}</th>
-                          <th className="text-right p-4 font-medium">{t('common.actions')}</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y">
                         {typeAccounts.map((account) => (
-                          <tr key={account.id} className="group hover:bg-muted/50">
+                          <tr 
+                            key={account.id} 
+                            className="group hover:bg-muted/50 cursor-pointer"
+                            onClick={(e) => handleEditClick(account, e)}
+                          >
                             <td className="p-4">
                               <HoverCard>
-                                <HoverCardTrigger className="font-medium hover:text-primary cursor-pointer">
+                                <HoverCardTrigger className="font-medium hover:text-primary">
                                   {account.name}
                                 </HoverCardTrigger>
                                 <HoverCardContent className="w-80">
@@ -195,30 +196,8 @@ const Accounts: React.FC = () => {
                                 </HoverCardContent>
                               </HoverCard>
                             </td>
-                            <td className="p-4">
-                              <p className="text-sm text-muted-foreground line-clamp-1">
-                                {account.description || t('accounts.noDescription')}
-                              </p>
-                            </td>
                             <td className="p-4 text-right">
                               <span className="text-sm font-medium">{account.currency}</span>
-                            </td>
-                            <td className="p-4 text-right">
-                              <span className={`font-medium ${
-                                account.balance < 0 ? 'text-red-500' : 'text-green-500'
-                              }`}>
-                                {formatCurrency(account.balance)}
-                              </span>
-                            </td>
-                            <td className="p-4 text-right">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={(e) => handleEditClick(account, e)}
-                                className="opacity-0 group-hover:opacity-100 transition-opacity"
-                              >
-                                {t('common.edit')}
-                              </Button>
                             </td>
                           </tr>
                         ))}
