@@ -7,16 +7,10 @@ import { dashboardSummary, transactions, accounts } from '../data/mockData';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { formatCurrency } from '@/lib/utils';
 
 const Dashboard: React.FC = () => {
   const { t } = useTranslation();
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
 
   const recentTransactions = transactions.slice(0, 5);
   const topAccounts = accounts.filter(account => account.type === 'asset' || account.type === 'liability').slice(0, 3);
