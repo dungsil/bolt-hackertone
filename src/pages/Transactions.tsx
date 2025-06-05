@@ -39,7 +39,6 @@ const Transactions: React.FC = () => {
       setIsAddingTransaction(false);
     } catch (error) {
       console.error('Failed to create transaction:', error);
-      // Handle error (show toast, etc.)
     }
   };
 
@@ -76,30 +75,6 @@ const Transactions: React.FC = () => {
       }
       return 0;
     });
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-2 text-sm text-muted-foreground">Loading transactions...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="p-8">
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-            <p className="text-lg font-medium text-destructive">Error loading transactions</p>
-            <p className="text-muted-foreground">{error}</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
@@ -179,8 +154,22 @@ const Transactions: React.FC = () => {
             </div>
           </div>
           
-          <div className="space-y-4">
-            {filteredTransactions.length === 0 ? (
+          <div className="relative space-y-4 min-h-[400px]">
+            {isLoading ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                  <p className="mt-2 text-sm text-muted-foreground">Loading transactions...</p>
+                </div>
+              </div>
+            ) : error ? (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+                  <p className="text-lg font-medium text-destructive">Error loading transactions</p>
+                  <p className="text-muted-foreground">{error}</p>
+                </CardContent>
+              </Card>
+            ) : filteredTransactions.length === 0 ? (
               <Card>
                 <CardContent className="flex flex-col items-center justify-center py-12 text-center">
                   <p className="text-lg font-medium">{t('transactions.noTransactions')}</p>
