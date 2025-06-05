@@ -1,0 +1,78 @@
+{
+  "common": {
+    "dashboard": "Dashboard",
+    "transactions": "Transactions",
+    "accounts": "Accounts",
+    "profile": "Profile",
+    "logout": "Logout",
+    "search": "Search",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "save": "Save",
+    "close": "Close",
+    "viewAll": "View all"
+  },
+  "dashboard": {
+    "welcome": "Welcome to your financial overview",
+    "netWorth": "Net Worth",
+    "monthlyIncome": "Monthly Income",
+    "monthlyExpenses": "Monthly Expenses",
+    "monthlySavings": "Monthly Savings",
+    "recentTransactions": "Recent Transactions",
+    "topAccounts": "Top Accounts",
+    "financialSummary": "Financial Summary",
+    "assetsVsLiabilities": "Assets vs Liabilities",
+    "incomeVsExpenses": "Income vs Expenses",
+    "assets": "Assets",
+    "liabilities": "Liabilities",
+    "income": "Income",
+    "expenses": "Expenses"
+  },
+  "accounts": {
+    "title": "Accounts",
+    "subtitle": "Manage your financial accounts",
+    "addAccount": "Add Account",
+    "searchAccounts": "Search accounts...",
+    "noAccounts": "No accounts found",
+    "tryAdjusting": "Try adjusting your search or filters",
+    "accountTypes": {
+      "all": "All Types",
+      "asset": "Assets",
+      "liability": "Liabilities",
+      "equity": "Equity",
+      "revenue": "Revenue",
+      "expense": "Expenses"
+    }
+  },
+  "transactions": {
+    "title": "Transactions",
+    "subtitle": "Manage your financial transactions",
+    "addTransaction": "Add Transaction",
+    "searchTransactions": "Search transactions...",
+    "noTransactions": "No transactions found",
+    "tryAdjusting": "Try adjusting your search or filters",
+    "date": "Date",
+    "description": "Description",
+    "amount": "Amount",
+    "type": "Type",
+    "account": "Account",
+    "viewDetails": "View Details",
+    "transactionDetails": "Transaction Details",
+    "transactionEntries": "Transaction Entries"
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "Manage your account settings",
+    "editProfile": "Edit Profile",
+    "profileInformation": "Profile Information",
+    "fullName": "Full Name",
+    "emailAddress": "Email Address",
+    "accountCreated": "Account Created",
+    "security": "Security",
+    "changePassword": "Change Password",
+    "dangerZone": "Danger Zone",
+    "deleteAccount": "Delete Account"
+  }
+}

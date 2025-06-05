@@ -1,0 +1,78 @@
+{
+  "common": {
+    "dashboard": "대시보드",
+    "transactions": "거래내역",
+    "accounts": "계좌",
+    "profile": "프로필",
+    "logout": "로그아웃",
+    "search": "검색",
+    "add": "추가",
+    "edit": "수정",
+    "delete": "삭제",
+    "cancel": "취소",
+    "save": "저장",
+    "close": "닫기",
+    "viewAll": "전체보기"
+  },
+  "dashboard": {
+    "welcome": "재무 현황에 오신 것을 환영합니다",
+    "netWorth": "순자산",
+    "monthlyIncome": "월 수입",
+    "monthlyExpenses": "월 지출",
+    "monthlySavings": "월 저축",
+    "recentTransactions": "최근 거래",
+    "topAccounts": "주요 계좌",
+    "financialSummary": "재무 요약",
+    "assetsVsLiabilities": "자산 vs 부채",
+    "incomeVsExpenses": "수입 vs 지출",
+    "assets": "자산",
+    "liabilities": "부채",
+    "income": "수입",
+    "expenses": "지출"
+  },
+  "accounts": {
+    "title": "계좌",
+    "subtitle": "금융 계좌 관리",
+    "addAccount": "계좌 추가",
+    "searchAccounts": "계좌 검색...",
+    "noAccounts": "계좌를 찾을 수 없습니다",
+    "tryAdjusting": "검색어나 필터를 조정해보세요",
+    "accountTypes": {
+      "all": "전체 유형",
+      "asset": "자산",
+      "liability": "부채",
+      "equity": "자본",
+      "revenue": "수익",
+      "expense": "비용"
+    }
+  },
+  "transactions": {
+    "title": "거래내역",
+    "subtitle": "금융 거래 관리",
+    "addTransaction": "거래 추가",
+    "searchTransactions": "거래 검색...",
+    "noTransactions": "거래내역을 찾을 수 없습니다",
+    "tryAdjusting": "검색어나 필터를 조정해보세요",
+    "date": "날짜",
+    "description": "설명",
+    "amount": "금액",
+    "type": "유형",
+    "account": "계좌",
+    "viewDetails": "상세 보기",
+    "transactionDetails": "거래 상세",
+    "transactionEntries": "거래 항목"
+  },
+  "profile": {
+    "title": "프로필",
+    "subtitle": "계정 설정 관리",
+    "editProfile": "프로필 수정",
+    "profileInformation": "프로필 정보",
+    "fullName": "이름",
+    "emailAddress": "이메일 주소",
+    "accountCreated": "계정 생성일",
+    "security": "보안",
+    "changePassword": "비밀번호 변경",
+    "dangerZone": "위험 구역",
+    "deleteAccount": "계정 삭제"
+  }
+}
