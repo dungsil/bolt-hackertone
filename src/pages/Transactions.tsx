@@ -211,12 +211,10 @@ const Transactions: React.FC = () => {
                       </div>
                     </div>
                     
-                    <details className="mt-4">
-                      <summary className="cursor-pointer text-sm font-medium text-primary hover:text-primary/90">
-                        <div className="flex items-center">
-                          <span>{t('transactions.viewDetails')}</span>
-                          <ChevronDown className="ml-1 h-4 w-4 transition-transform group-open:rotate-180" />
-                        </div>
+                    <details className="mt-4 group">
+                      <summary className="list-none cursor-pointer text-sm font-medium text-primary hover:text-primary/90 flex items-center">
+                        <span>{t('transactions.viewDetails')}</span>
+                        <ChevronDown className="ml-1 h-4 w-4 transition-transform group-open:rotate-180" />
                       </summary>
                       
                       <div className="mt-3 space-y-3 rounded-md border bg-muted p-3">
