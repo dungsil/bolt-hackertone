@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import App from './App';
 import Layout from './components/Layout';
 import AuthLayout from './components/AuthLayout';
 import Login from './pages/Login';
@@ -13,30 +14,35 @@ import './index.css';
 
 const router = createBrowserRouter([
   {
-    path: '/login',
-    element: <Login />,
-  },
-  {
-    path: '/register',
-    element: <Register />,
-  },
-  {
-    element: <AuthLayout />,
+    element: <App />,
     children: [
       {
-        element: <Layout />,
+        path: 'login',
+        element: <Login />,
+      },
+      {
+        path: 'register',
+        element: <Register />,
+      },
+      {
+        element: <AuthLayout />,
         children: [
           {
-            path: '/',
-            element: <Dashboard />,
-          },
-          {
-            path: '/transactions',
-            element: <Transactions />,
-          },
-          {
-            path: '/accounts',
-            element: <Accounts />,
+            element: <Layout />,
+            children: [
+              {
+                index: true,
+                element: <Dashboard />,
+              },
+              {
+                path: 'transactions',
+                element: <Transactions />,
+              },
+              {
+                path: 'accounts',
+                element: <Accounts />,
+              },
+            ],
           },
         ],
       },
