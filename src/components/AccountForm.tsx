@@ -18,13 +18,13 @@ interface AccountFormProps {
 }
 
 const AccountForm: React.FC<AccountFormProps> = ({ onSubmit, onCancel }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     type: '',
-    currency: 'USD',
+    currency: i18n.language === 'ko' ? 'KRW' : 'USD',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
