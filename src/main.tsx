@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { ThemeProvider } from './components/theme-provider';
 import Layout from './components/Layout';
 import AuthLayout from './components/AuthLayout';
 import Login from './pages/Login';
@@ -12,6 +13,14 @@ import './i18n';
 import './index.css';
 
 const router = createBrowserRouter([
+  {
+    path: '/login',
+    element: <Login />,
+  },
+  {
+    path: '/register',
+    element: <Register />,
+  },
   {
     element: <AuthLayout />,
     children: [
@@ -34,18 +43,12 @@ const router = createBrowserRouter([
       },
     ],
   },
-  {
-    path: '/login',
-    element: <Login />,
-  },
-  {
-    path: '/register',
-    element: <Register />,
-  },
 ]);
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <ThemeProvider defaultTheme="system" storageKey="pawqar-theme">
+      <RouterProvider router={router} />
+    </ThemeProvider>
   </StrictMode>
 );
