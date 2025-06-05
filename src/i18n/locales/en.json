@@ -60,6 +60,7 @@
     "type": "Account Type",
     "description": "Description",
     "descriptionPlaceholder": "Enter a description for this account",
+    "noDescription": "No description provided",
     "currency": "Currency",
     "selectType": "Select account type",
     "searchAccounts": "Search accounts...",

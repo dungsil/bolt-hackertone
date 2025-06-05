@@ -7,33 +7,28 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '@/components/ui/hover-card';
 import { formatCurrency } from '@/lib/utils';
 
 const Accounts: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { accounts, isLoading, error, refetch } = useAccounts();
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState<'all' | 'asset' | 'liability' | 'equity' | 'revenue' | 'expense'>('all');
   const [selectedAccount, setSelectedAccount] = useState<typeof accounts[0] | null>(null);
   const [isAddingAccount, setIsAddingAccount] = useState(false);
+  const [isEditingAccount, setIsEditingAccount] = useState(false);
 
   const filteredAccounts = accounts.filter(account => {
     if (searchTerm && !account.name.toLowerCase().includes(searchTerm.toLowerCase())) {
-      return false;
-    }
-    if (filterType !== 'all' && account.type !== filterType) {
       return false;
     }
     return true;
@@ -67,6 +62,18 @@ const Accounts: React.FC = () => {
     setIsAddingAccount(false);
   };
 
+  const handleEditAccount = async () => {
+    await refetch();
+    setIsEditingAccount(false);
+    setSelectedAccount(null);
+  };
+
+  const handleEditClick = (account: typeof accounts[0], e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedAccount(account);
+    setIsEditingAccount(true);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -91,7 +98,7 @@ const Accounts: React.FC = () => {
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold">
-                {formatCurrency(totals[type] || 0, 'USD', i18n.language)}
+                {formatCurrency(totals[type] || 0)}
               </p>
             </CardContent>
           </Card>
@@ -149,23 +156,50 @@ const Accounts: React.FC = () => {
                     </div>
                     <div className="divide-y">
                       {typeAccounts.map((account) => (
-                        <div
-                          key={account.id}
-                          className="flex items-center justify-between p-4 hover:bg-muted/50 cursor-pointer"
-                          onClick={() => setSelectedAccount(account)}
-                        >
-                          <div>
-                            <p className="font-medium">{account.name}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {new Date(account.created_at).toLocaleDateString(i18n.language)}
-                            </p>
-                          </div>
-                          <p className={`text-lg font-semibold ${
-                            account.balance < 0 ? 'text-red-500' : 'text-green-500'
-                          }`}>
-                            {formatCurrency(account.balance, account.currency, i18n.language)}
-                          </p>
-                        </div>
+                        <HoverCard key={account.id}>
+                          <HoverCardTrigger asChild>
+                            <div className="flex items-center justify-between p-4 hover:bg-muted/50">
+                              <div>
+                                <p className="font-medium">{account.name}</p>
+                                {account.description && (
+                                  <p className="mt-1 text-sm text-muted-foreground line-clamp-1">
+                                    {account.description}
+                                  </p>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-4">
+                                <p className={`text-lg font-semibold ${
+                                  account.balance < 0 ? 'text-red-500' : 'text-green-500'
+                                }`}>
+                                  {formatCurrency(account.balance)}
+                                </p>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={(e) => handleEditClick(account, e)}
+                                >
+                                  {t('common.edit')}
+                                </Button>
+                              </div>
+                            </div>
+                          </HoverCardTrigger>
+                          <HoverCardContent className="w-80">
+                            <div className="space-y-2">
+                              <h4 className="font-medium">{account.name}</h4>
+                              <p className="text-sm text-muted-foreground">
+                                {account.description || t('accounts.noDescription')}
+                              </p>
+                              <div className="pt-2">
+                                <p className="text-sm text-muted-foreground">
+                                  {t('common.created')}: {new Date(account.created_at).toLocaleDateString()}
+                                </p>
+                                <p className="text-sm text-muted-foreground">
+                                  {t('common.lastUpdated')}: {new Date(account.updated_at).toLocaleDateString()}
+                                </p>
+                              </div>
+                            </div>
+                          </HoverCardContent>
+                        </HoverCard>
                       ))}
                     </div>
                   </div>
@@ -189,51 +223,30 @@ const Accounts: React.FC = () => {
         </DialogContent>
       </Dialog>
       
-      {/* Account Details Dialog */}
-      <Dialog open={selectedAccount !== null} onOpenChange={() => setSelectedAccount(null)}>
+      {/* Edit Account Dialog */}
+      <Dialog open={isEditingAccount} onOpenChange={(open) => {
+        setIsEditingAccount(open);
+        if (!open) setSelectedAccount(null);
+      }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{selectedAccount?.name}</DialogTitle>
+            <DialogTitle>{t('accounts.editAccount')}</DialogTitle>
           </DialogHeader>
-          
           {selectedAccount && (
-            <div className="mt-4 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">{t('transactions.type')}</p>
-                  <p className="font-medium capitalize">{t(`accounts.accountTypes.${selectedAccount.type}`)}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">{t('transactions.amount')}</p>
-                  <p className="font-medium">
-                    {formatCurrency(selectedAccount.balance, selectedAccount.currency, i18n.language)}
-                  </p>
-                </div>
-              </div>
-              
-              <div>
-                <p className="text-sm text-muted-foreground">{t('common.created')}</p>
-                <p className="font-medium">
-                  {selectedAccount.created_at.toLocaleDateString(i18n.language)}
-                </p>
-              </div>
-              
-              <div>
-                <p className="text-sm text-muted-foreground">{t('common.lastUpdated')}</p>
-                <p className="font-medium">
-                  {selectedAccount.updated_at.toLocaleDateString(i18n.language)}
-                </p>
-              </div>
-              
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setSelectedAccount(null)}>
-                  {t('common.close')}
-                </Button>
-                <Button>
-                  {t('common.edit')}
-                </Button>
-              </div>
-            </div>
+            <AccountForm
+              initialData={{
+                id: selectedAccount.id,
+                name: selectedAccount.name,
+                type: selectedAccount.type,
+                description: selectedAccount.description,
+                currency: selectedAccount.currency,
+              }}
+              onSubmit={handleEditAccount}
+              onCancel={() => {
+                setIsEditingAccount(false);
+                setSelectedAccount(null);
+              }}
+            />
           )}
         </DialogContent>
       </Dialog>
