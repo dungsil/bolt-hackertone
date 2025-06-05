@@ -3,9 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { Plus, Search } from 'lucide-react';
 import { useAccounts } from '@/hooks/useAccounts';
 import AccountCard from '../components/AccountCard';
+import AccountForm from '../components/AccountForm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
@@ -13,26 +14,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 const Accounts: React.FC = () => {
   const { t } = useTranslation();
-  const { accounts, isLoading, error } = useAccounts();
+  const { accounts, isLoading, error, refetch } = useAccounts();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'asset' | 'liability' | 'equity' | 'revenue' | 'expense'>('all');
   const [selectedAccount, setSelectedAccount] = useState<typeof accounts[0] | null>(null);
+  const [isAddingAccount, setIsAddingAccount] = useState(false);
 
   const filteredAccounts = accounts.filter(account => {
-    // Apply search filter
     if (searchTerm && !account.name.toLowerCase().includes(searchTerm.toLowerCase())) {
       return false;
     }
-    
-    // Apply type filter
     if (filterType !== 'all' && account.type !== filterType) {
       return false;
     }
-    
     return true;
   });
 
@@ -45,6 +48,17 @@ const Accounts: React.FC = () => {
     { value: 'expense', label: t('accounts.accountTypes.expense') },
   ];
 
+  // Calculate totals
+  const totals = accounts.reduce((acc, account) => {
+    acc[account.type] = (acc[account.type] || 0) + account.balance;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const handleAddAccount = async () => {
+    await refetch();
+    setIsAddingAccount(false);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -52,10 +66,93 @@ const Accounts: React.FC = () => {
           <h1 className="text-2xl font-bold">{t('accounts.title')}</h1>
           <p className="text-muted-foreground">{t('accounts.subtitle')}</p>
         </div>
-        <Button>
+        <Button onClick={() => setIsAddingAccount(true)}>
           <Plus className="mr-1 h-4 w-4" />
           {t('accounts.addAccount')}
         </Button>
+      </div>
+
+      {/* Account Summary Grid */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+        <Card>
+          <CardHeader className="pb-2">
+            <h3 className="text-sm font-medium text-muted-foreground">
+              {t('accounts.accountTypes.asset')}
+            </h3>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">
+              {new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+              }).format(totals.asset || 0)}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <h3 className="text-sm font-medium text-muted-foreground">
+              {t('accounts.accountTypes.liability')}
+            </h3>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">
+              {new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+              }).format(totals.liability || 0)}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <h3 className="text-sm font-medium text-muted-foreground">
+              {t('accounts.accountTypes.equity')}
+            </h3>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">
+              {new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+              }).format(totals.equity || 0)}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <h3 className="text-sm font-medium text-muted-foreground">
+              {t('accounts.accountTypes.revenue')}
+            </h3>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">
+              {new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+              }).format(totals.revenue || 0)}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <h3 className="text-sm font-medium text-muted-foreground">
+              {t('accounts.accountTypes.expense')}
+            </h3>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">
+              {new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+              }).format(totals.expense || 0)}
+            </p>
+          </CardContent>
+        </Card>
       </div>
       
       {/* Filters and Search */}
@@ -125,6 +222,19 @@ const Accounts: React.FC = () => {
           )}
         </CardContent>
       </Card>
+      
+      {/* Add Account Dialog */}
+      <Dialog open={isAddingAccount} onOpenChange={setIsAddingAccount}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('accounts.addAccount')}</DialogTitle>
+          </DialogHeader>
+          <AccountForm
+            onSubmit={handleAddAccount}
+            onCancel={() => setIsAddingAccount(false)}
+          />
+        </DialogContent>
+      </Dialog>
       
       {/* Account Details Dialog */}
       <Dialog open={selectedAccount !== null} onOpenChange={() => setSelectedAccount(null)}>
