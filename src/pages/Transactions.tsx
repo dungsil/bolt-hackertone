@@ -105,30 +105,26 @@ const Transactions: React.FC = () => {
           <h1 className="text-2xl font-bold">{t('transactions.title')}</h1>
           <p className="text-muted-foreground">{t('transactions.subtitle')}</p>
         </div>
-        <Button onClick={() => setIsAddingTransaction(!isAddingTransaction)}>
+        <Button onClick={() => setIsAddingTransaction(true)}>
           <Plus className="mr-1 h-4 w-4" />
-          {isAddingTransaction ? t('common.cancel') : t('transactions.addTransaction')}
+          {t('transactions.addTransaction')}
         </Button>
       </div>
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Transaction Form */}
-        <div className={`space-y-6 ${isAddingTransaction ? '' : 'lg:hidden'}`}>
-          <Card>
-            <CardContent className="pt-6">
-              <h2 className="mb-4 text-xl font-semibold">{t('transactions.addTransaction')}</h2>
-              <TransactionForm
-                onSubmit={handleAddTransaction}
-                onCancel={() => setIsAddingTransaction(false)}
-              />
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Transactions List */}
-        <div className="space-y-6">
-          <div className="flex flex-col gap-4">
-            <div className="relative w-full">
+      
+      {isAddingTransaction ? (
+        <Card>
+          <CardContent className="pt-6">
+            <h2 className="mb-4 text-xl font-semibold">{t('transactions.addTransaction')}</h2>
+            <TransactionForm
+              onSubmit={handleAddTransaction}
+              onCancel={() => setIsAddingTransaction(false)}
+            />
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="relative w-full md:w-64">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="text"
@@ -145,10 +141,10 @@ const Transactions: React.FC = () => {
                 onValueChange={(value) => setFilterType(value as 'all' | 'debit' | 'credit')}
               >
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder={t('transactions.type')} />
+                  <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">{t('accounts.accountTypes.all')}</SelectItem>
+                  <SelectItem value="all">All Types</SelectItem>
                   <SelectItem value="debit">Debit</SelectItem>
                   <SelectItem value="credit">Credit</SelectItem>
                 </SelectContent>
@@ -158,7 +154,7 @@ const Transactions: React.FC = () => {
                 variant="outline"
                 onClick={() => handleSort('date')}
               >
-                {t('transactions.date')}
+                Date
                 <ArrowUpDown className="ml-1 h-3 w-3" />
               </Button>
               
@@ -166,7 +162,7 @@ const Transactions: React.FC = () => {
                 variant="outline"
                 onClick={() => handleSort('description')}
               >
-                {t('transactions.description')}
+                Description
                 <ArrowUpDown className="ml-1 h-3 w-3" />
               </Button>
               
@@ -174,7 +170,7 @@ const Transactions: React.FC = () => {
                 variant="outline"
                 onClick={() => handleSort('amount')}
               >
-                {t('transactions.amount')}
+                Amount
                 <ArrowUpDown className="ml-1 h-3 w-3" />
               </Button>
             </div>
@@ -215,39 +211,48 @@ const Transactions: React.FC = () => {
                       </div>
                     </div>
                     
-                    <div className="mt-3 space-y-3 rounded-md border bg-muted p-3">
-                      <h4 className="text-sm font-medium">{t('transactions.transactionEntries')}</h4>
+                    <details className="mt-4">
+                      <summary className="cursor-pointer text-sm font-medium text-primary hover:text-primary/90">
+                        <div className="flex items-center">
+                          <span>{t('transactions.viewDetails')}</span>
+                          <ChevronDown className="ml-1 h-4 w-4 transition-transform group-open:rotate-180" />
+                        </div>
+                      </summary>
                       
-                      <div className="space-y-2">
-                        {transaction.entries.map((entry) => (
-                          <div key={entry.id} className="flex items-center justify-between rounded-md bg-background p-2 text-sm">
-                            <span>{getAccountNameById(entry.accountId)}</span>
-                            <div className="flex items-center gap-2">
-                              <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                                entry.type === 'debit' 
-                                  ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100' 
-                                  : 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100'
-                              }`}>
-                                {entry.type}
-                              </span>
-                              <span className="font-medium">{formatCurrency(entry.amount)}</span>
+                      <div className="mt-3 space-y-3 rounded-md border bg-muted p-3">
+                        <h4 className="text-sm font-medium">{t('transactions.transactionEntries')}</h4>
+                        
+                        <div className="space-y-2">
+                          {transaction.entries.map((entry) => (
+                            <div key={entry.id} className="flex items-center justify-between rounded-md bg-background p-2 text-sm">
+                              <span>{getAccountNameById(entry.accountId)}</span>
+                              <div className="flex items-center gap-2">
+                                <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                                  entry.type === 'debit' 
+                                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100' 
+                                    : 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100'
+                                }`}>
+                                  {entry.type}
+                                </span>
+                                <span className="font-medium">{formatCurrency(entry.amount)}</span>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
+                        
+                        <div className="text-xs text-muted-foreground">
+                          <p>Created: {new Date(transaction.createdAt).toLocaleString()}</p>
+                          <p>Last Updated: {new Date(transaction.updatedAt).toLocaleString()}</p>
+                        </div>
                       </div>
-                      
-                      <div className="text-xs text-muted-foreground">
-                        <p>{t('common.created')}: {new Date(transaction.createdAt).toLocaleString()}</p>
-                        <p>{t('common.lastUpdated')}: {new Date(transaction.updatedAt).toLocaleString()}</p>
-                      </div>
-                    </div>
+                    </details>
                   </CardContent>
                 </Card>
               ))
             )}
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 };
