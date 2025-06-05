@@ -25,9 +25,6 @@ const router = createBrowserRouter([
         element: <Register />,
       },
       {
-        element: <AuthLayout />,
-        children: [
-          {
             element: <Layout />,
             children: [
               {
@@ -44,8 +41,6 @@ const router = createBrowserRouter([
               },
             ],
           },
-        ],
-      },
     ],
   },
 ]);
