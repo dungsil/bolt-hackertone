@@ -25,22 +25,22 @@ const router = createBrowserRouter([
         element: <Register />,
       },
       {
-            element: <Layout />,
-            children: [
-              {
-                index: true,
-                element: <Dashboard />,
-              },
-              {
-                path: 'transactions',
-                element: <Transactions />,
-              },
-              {
-                path: 'accounts',
-                element: <Accounts />,
-              },
-            ],
+        element: <Layout />,
+        children: [
+          {
+            index: true,
+            element: <Dashboard />,
           },
+          {
+            path: 'transactions',
+            element: <Transactions />,
+          },
+          {
+            path: 'accounts',
+            element: <Accounts />,
+          },
+        ],
+      },
     ],
   },
 ]);
