@@ -3,8 +3,6 @@
     "dashboard": "Dashboard",
     "transactions": "Transactions",
     "accounts": "Accounts",
-    "profile": "Profile",
-    "logout": "Logout",
     "search": "Search",
     "add": "Add",
     "edit": "Edit",
@@ -68,18 +66,5 @@
     "transactionEntries": "Transaction Entries",
     "debit": "Debit",
     "credit": "Credit"
-  },
-  "profile": {
-    "title": "Profile",
-    "subtitle": "Manage your account settings",
-    "editProfile": "Edit Profile",
-    "profileInformation": "Profile Information",
-    "fullName": "Full Name",
-    "emailAddress": "Email Address",
-    "accountCreated": "Account Created",
-    "security": "Security",
-    "changePassword": "Change Password",
-    "dangerZone": "Danger Zone",
-    "deleteAccount": "Delete Account"
   }
 }

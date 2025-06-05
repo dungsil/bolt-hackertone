@@ -3,8 +3,6 @@
     "dashboard": "대시보드",
     "transactions": "거래내역",
     "accounts": "계좌",
-    "profile": "프로필",
-    "logout": "로그아웃",
     "search": "검색",
     "add": "추가",
     "edit": "수정",
@@ -68,18 +66,5 @@
     "transactionEntries": "거래 항목",
     "debit": "차변",
     "credit": "대변"
-  },
-  "profile": {
-    "title": "프로필",
-    "subtitle": "계정 설정 관리",
-    "editProfile": "프로필 수정",
-    "profileInformation": "프로필 정보",
-    "fullName": "이름",
-    "emailAddress": "이메일 주소",
-    "accountCreated": "계정 생성일",
-    "security": "보안",
-    "changePassword": "비밀번호 변경",
-    "dangerZone": "위험 구역",
-    "deleteAccount": "계정 삭제"
   }
 }
