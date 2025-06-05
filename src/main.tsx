@@ -14,19 +14,6 @@ import './index.css';
 
 const router = createBrowserRouter([
   {
-    element: <AuthLayout />,
-    children: [
-      {
-        path: '/login',
-        element: <Login />,
-      },
-      {
-        path: '/register',
-        element: <Register />,
-      },
-    ],
-  },
-  {
       path: '/',
         element: <Layout />,
         children: [
@@ -44,6 +31,19 @@ const router = createBrowserRouter([
           },
         ],
       },
+  {
+    element: <AuthLayout />,
+    children: [
+      {
+        path: '/login',
+        element: <Login />,
+      },
+      {
+        path: '/register',
+        element: <Register />,
+      },
+    ],
+  },
 ]);
 
 createRoot(document.getElementById('root')!).render(
