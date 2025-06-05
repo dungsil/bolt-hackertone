@@ -7,6 +7,6 @@ export default {
   out: './drizzle',
   driver: 'pg',
   dbCredentials: {
-    connectionString: process.env.VITE_SUPABASE_ANON_KEY!,
+    connectionString: process.env.VITE_DATABASE_URL!,
   },
 } satisfies Config;
