@@ -13,35 +13,34 @@ import './index.css';
 
 const router = createBrowserRouter([
   {
-    path: '/',
-    element: <Layout />,
+    element: <AuthLayout />,
     children: [
       {
-        index: true,
-        element: <Dashboard />,
-      },
-      {
-        path: 'transactions',
-        element: <Transactions />,
-      },
-      {
-        path: 'accounts',
-        element: <Accounts />,
+        element: <Layout />,
+        children: [
+          {
+            path: '/',
+            element: <Dashboard />,
+          },
+          {
+            path: '/transactions',
+            element: <Transactions />,
+          },
+          {
+            path: '/accounts',
+            element: <Accounts />,
+          },
+        ],
       },
     ],
   },
   {
-    element: <AuthLayout />,
-    children: [
-      {
-        path: '/login',
-        element: <Login />,
-      },
-      {
-        path: '/register',
-        element: <Register />,
-      },
-    ],
+    path: '/login',
+    element: <Login />,
+  },
+  {
+    path: '/register',
+    element: <Register />,
   },
 ]);
 
