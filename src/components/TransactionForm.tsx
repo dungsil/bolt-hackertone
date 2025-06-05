@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Account } from '../types';
-import { accounts } from '../data/mockData';
+import { db } from '@/lib/db';
+import { accounts } from '@/lib/db/schema';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card } from '@/components/ui/card';
+import { supabase } from '@/lib/db';
+
+interface Account {
+  id: string;
+  name: string;
+  type: 'asset' | 'liability' | 'equity' | 'revenue' | 'expense';
+}
 
 interface TransactionFormProps {
   onSubmit: (data: any) => void;
@@ -15,12 +22,36 @@ interface TransactionFormProps {
 
 const TransactionForm: React.FC<TransactionFormProps> = ({ onSubmit, onCancel }) => {
   const { t } = useTranslation();
+  const [accountsList, setAccountsList] = useState<Account[]>([]);
   const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [description, setDescription] = useState<string>('');
   const [entries, setEntries] = useState<Array<{ accountId: string; amount: string; type: 'debit' | 'credit' }>>([
     { accountId: '', amount: '', type: 'debit' },
     { accountId: '', amount: '', type: 'credit' },
   ]);
+
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error('Not authenticated');
+
+        const result = await db.query.accounts.findMany({
+          columns: {
+            id: true,
+            name: true,
+            type: true,
+          },
+        });
+
+        setAccountsList(result);
+      } catch (error) {
+        console.error('Failed to fetch accounts:', error);
+      }
+    };
+
+    fetchAccounts();
+  }, []);
 
   const handleEntryChange = (index: number, field: string, value: string) => {
     const newEntries = [...entries];
@@ -111,7 +142,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onSubmit, onCancel })
                     <SelectValue placeholder={t('transactions.account')} />
                   </SelectTrigger>
                   <SelectContent>
-                    {accounts.map((account) => (
+                    {accountsList.map((account) => (
                       <SelectItem key={account.id} value={account.id}>
                         {account.name} ({t(`accounts.accountTypes.${account.type}`)})
                       </SelectItem>

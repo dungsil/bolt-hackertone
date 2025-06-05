@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus, Filter, Search, ArrowUpDown, ChevronDown } from 'lucide-react';
-import { Transaction, Account } from '../types';
-import { transactions as mockTransactions, accounts } from '../data/mockData';
+import { useTransactions } from '@/hooks/useTransactions';
 import TransactionForm from '../components/TransactionForm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,27 +13,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { formatCurrency } from '@/lib/utils';
 
 const Transactions: React.FC = () => {
   const { t } = useTranslation();
-  const [transactions, setTransactions] = useState<Transaction[]>(mockTransactions);
+  const { transactions, isLoading, error, createTransaction } = useTransactions();
   const [isAddingTransaction, setIsAddingTransaction] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortField, setSortField] = useState<'date' | 'description' | 'amount'>('date');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [filterType, setFilterType] = useState<'all' | 'debit' | 'credit'>('all');
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
-
-  const getAccountNameById = (id: string): string => {
-    const account = accounts.find(acc => acc.id === id);
-    return account ? account.name : 'Unknown Account';
-  };
 
   const handleSort = (field: 'date' | 'description' | 'amount') => {
     if (sortField === field) {
@@ -45,23 +33,14 @@ const Transactions: React.FC = () => {
     }
   };
 
-  const handleAddTransaction = (data: any) => {
-    const newTransaction: Transaction = {
-      id: `tx-${transactions.length + 1}`,
-      date: data.date,
-      description: data.description,
-      entries: data.entries.map((entry: any, index: number) => ({
-        id: `entry-${new Date().getTime()}-${index}`,
-        accountId: entry.accountId,
-        amount: entry.amount,
-        type: entry.type,
-      })),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    
-    setTransactions([newTransaction, ...transactions]);
-    setIsAddingTransaction(false);
+  const handleAddTransaction = async (data: any) => {
+    try {
+      await createTransaction(data);
+      setIsAddingTransaction(false);
+    } catch (error) {
+      console.error('Failed to create transaction:', error);
+      // Handle error (show toast, etc.)
+    }
   };
 
   const filteredTransactions = transactions
@@ -71,7 +50,7 @@ const Transactions: React.FC = () => {
         return (
           transaction.description.toLowerCase().includes(searchLower) ||
           transaction.entries.some(entry => 
-            getAccountNameById(entry.accountId).toLowerCase().includes(searchLower)
+            entry.account.name.toLowerCase().includes(searchLower)
           )
         );
       }
@@ -84,8 +63,8 @@ const Transactions: React.FC = () => {
     .sort((a, b) => {
       if (sortField === 'date') {
         return sortDirection === 'asc'
-          ? new Date(a.date).getTime() - new Date(b.date).getTime()
-          : new Date(b.date).getTime() - new Date(a.date).getTime();
+          ? a.date.getTime() - b.date.getTime()
+          : b.date.getTime() - a.date.getTime();
       } else if (sortField === 'description') {
         return sortDirection === 'asc'
           ? a.description.localeCompare(b.description)
@@ -97,6 +76,30 @@ const Transactions: React.FC = () => {
       }
       return 0;
     });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-2 text-sm text-muted-foreground">Loading transactions...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-8">
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+            <p className="text-lg font-medium text-destructive">Error loading transactions</p>
+            <p className="text-muted-foreground">{error}</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -193,7 +196,7 @@ const Transactions: React.FC = () => {
                         <div className="flex items-center gap-2">
                           <h3 className="font-medium">{transaction.description}</h3>
                           <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
-                            {new Date(transaction.date).toLocaleDateString()}
+                            {transaction.date.toLocaleDateString()}
                           </span>
                         </div>
                         <p className="mt-1 text-sm text-muted-foreground">
@@ -223,7 +226,7 @@ const Transactions: React.FC = () => {
                         <div className="space-y-2">
                           {transaction.entries.map((entry) => (
                             <div key={entry.id} className="flex items-center justify-between rounded-md bg-background p-2 text-sm">
-                              <span>{getAccountNameById(entry.accountId)}</span>
+                              <span>{entry.account.name}</span>
                               <div className="flex items-center gap-2">
                                 <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
                                   entry.type === 'debit' 
@@ -239,8 +242,8 @@ const Transactions: React.FC = () => {
                         </div>
                         
                         <div className="text-xs text-muted-foreground">
-                          <p>Created: {new Date(transaction.createdAt).toLocaleString()}</p>
-                          <p>Last Updated: {new Date(transaction.updatedAt).toLocaleString()}</p>
+                          <p>Created: {transaction.createdAt.toLocaleString()}</p>
+                          <p>Last Updated: {transaction.updatedAt.toLocaleString()}</p>
                         </div>
                       </div>
                     </details>
