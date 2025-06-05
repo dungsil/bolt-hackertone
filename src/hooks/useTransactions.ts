@@ -1,4 +1,3 @@
-```typescript
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { db } from '@/lib/db';
@@ -127,4 +126,3 @@ export function useTransactions() {
     refetch: fetchTransactions
   };
 }
-```
