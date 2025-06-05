@@ -20,9 +20,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { formatCurrency } from '@/lib/utils';
 
 const Accounts: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { accounts, isLoading, error, refetch } = useAccounts();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'asset' | 'liability' | 'equity' | 'revenue' | 'expense'>('all');
@@ -82,10 +83,7 @@ const Accounts: React.FC = () => {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
-              {new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD'
-              }).format(totals.asset || 0)}
+              {formatCurrency(totals.asset || 0, 'USD', i18n.language)}
             </p>
           </CardContent>
         </Card>
@@ -98,10 +96,7 @@ const Accounts: React.FC = () => {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
-              {new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD'
-              }).format(totals.liability || 0)}
+              {formatCurrency(totals.liability || 0, 'USD', i18n.language)}
             </p>
           </CardContent>
         </Card>
@@ -114,10 +109,7 @@ const Accounts: React.FC = () => {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
-              {new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD'
-              }).format(totals.equity || 0)}
+              {formatCurrency(totals.equity || 0, 'USD', i18n.language)}
             </p>
           </CardContent>
         </Card>
@@ -130,10 +122,7 @@ const Accounts: React.FC = () => {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
-              {new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD'
-              }).format(totals.revenue || 0)}
+              {formatCurrency(totals.revenue || 0, 'USD', i18n.language)}
             </p>
           </CardContent>
         </Card>
@@ -146,10 +135,7 @@ const Accounts: React.FC = () => {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
-              {new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD'
-              }).format(totals.expense || 0)}
+              {formatCurrency(totals.expense || 0, 'USD', i18n.language)}
             </p>
           </CardContent>
         </Card>
@@ -253,10 +239,7 @@ const Accounts: React.FC = () => {
                 <div>
                   <p className="text-sm text-muted-foreground">{t('transactions.amount')}</p>
                   <p className="font-medium">
-                    {new Intl.NumberFormat('en-US', {
-                      style: 'currency',
-                      currency: selectedAccount.currency
-                    }).format(selectedAccount.balance)}
+                    {formatCurrency(selectedAccount.balance, selectedAccount.currency, i18n.language)}
                   </p>
                 </div>
               </div>
@@ -264,14 +247,14 @@ const Accounts: React.FC = () => {
               <div>
                 <p className="text-sm text-muted-foreground">{t('common.created')}</p>
                 <p className="font-medium">
-                  {selectedAccount.created_at.toLocaleDateString()}
+                  {selectedAccount.created_at.toLocaleDateString(i18n.language)}
                 </p>
               </div>
               
               <div>
                 <p className="text-sm text-muted-foreground">{t('common.lastUpdated')}</p>
                 <p className="font-medium">
-                  {selectedAccount.updated_at.toLocaleDateString()}
+                  {selectedAccount.updated_at.toLocaleDateString(i18n.language)}
                 </p>
               </div>
               
