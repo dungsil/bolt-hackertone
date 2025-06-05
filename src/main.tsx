@@ -24,7 +24,9 @@ const router = createBrowserRouter([
         path: 'register',
         element: <Register />,
       },
-      {
+    ],
+  },
+  {
         element: <Layout />,
         children: [
           {
@@ -41,8 +43,6 @@ const router = createBrowserRouter([
           },
         ],
       },
-    ],
-  },
 ]);
 
 createRoot(document.getElementById('root')!).render(
