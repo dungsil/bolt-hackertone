@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { db } from '@/lib/db';
-import { accounts } from '@/lib/db/schema';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -36,15 +34,13 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onSubmit, onCancel })
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error('Not authenticated');
 
-        const result = await db.query.accounts.findMany({
-          columns: {
-            id: true,
-            name: true,
-            type: true,
-          },
-        });
+        const { data, error } = await supabase
+          .from('accounts')
+          .select('id, name, type')
+          .eq('user_id', user.id);
 
-        setAccountsList(result);
+        if (error) throw error;
+        setAccountsList(data);
       } catch (error) {
         console.error('Failed to fetch accounts:', error);
       }

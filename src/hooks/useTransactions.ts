@@ -1,19 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { db } from '@/lib/db';
-import { transactions, transactionEntries, accounts } from '@/lib/db/schema';
-import { eq, desc } from 'drizzle-orm';
 import { supabase } from '@/lib/db';
 
 export interface TransactionWithEntries {
   id: string;
   date: Date;
   description: string;
-  createdAt: Date;
-  updatedAt: Date;
+  created_at: Date;
+  updated_at: Date;
   entries: {
     id: string;
-    accountId: string;
+    account_id: string;
     amount: number;
     type: 'debit' | 'credit';
     account: {
@@ -33,23 +30,25 @@ export function useTransactions() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      const result = await db.query.transactions.findMany({
-        where: eq(transactions.userId, user.id),
-        orderBy: desc(transactions.date),
-        with: {
-          entries: {
-            with: {
-              account: true
-            }
-          }
-        }
-      });
+      const { data: transactions, error: txError } = await supabase
+        .from('transactions')
+        .select(`
+          *,
+          entries:transaction_entries(
+            *,
+            account:accounts(name)
+          )
+        `)
+        .eq('user_id', user.id)
+        .order('date', { ascending: false });
 
-      setData(result.map(tx => ({
+      if (txError) throw txError;
+
+      setData(transactions.map(tx => ({
         ...tx,
         date: new Date(tx.date),
-        createdAt: new Date(tx.createdAt),
-        updatedAt: new Date(tx.updatedAt),
+        created_at: new Date(tx.created_at),
+        updated_at: new Date(tx.updated_at),
         entries: tx.entries.map(entry => ({
           ...entry,
           amount: Number(entry.amount)
@@ -75,37 +74,54 @@ export function useTransactions() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      const [newTransaction] = await db
-        .insert(transactions)
-        .values({
-          userId: user.id,
+      // Start a Supabase transaction
+      const { data: newTransaction, error: txError } = await supabase
+        .from('transactions')
+        .insert({
+          user_id: user.id,
           date: new Date(data.date),
           description: data.description
         })
-        .returning();
+        .select()
+        .single();
 
-      await db.insert(transactionEntries).values(
-        data.entries.map(entry => ({
-          transactionId: newTransaction.id,
-          accountId: entry.accountId,
-          amount: entry.amount,
-          type: entry.type
-        }))
-      );
+      if (txError) throw txError;
+
+      // Insert transaction entries
+      const { error: entriesError } = await supabase
+        .from('transaction_entries')
+        .insert(
+          data.entries.map(entry => ({
+            transaction_id: newTransaction.id,
+            account_id: entry.accountId,
+            amount: entry.amount,
+            type: entry.type
+          }))
+        );
+
+      if (entriesError) throw entriesError;
 
       // Update account balances
       for (const entry of data.entries) {
-        const account = await db.query.accounts.findFirst({
-          where: eq(accounts.id, entry.accountId)
-        });
-        
-        if (account) {
-          const balanceChange = entry.type === 'debit' ? entry.amount : -entry.amount;
-          await db
-            .update(accounts)
-            .set({ balance: account.balance + balanceChange })
-            .where(eq(accounts.id, entry.accountId));
-        }
+        // Get current account balance
+        const { data: account, error: accountError } = await supabase
+          .from('accounts')
+          .select('balance')
+          .eq('id', entry.accountId)
+          .single();
+
+        if (accountError) throw accountError;
+
+        const balanceChange = entry.type === 'debit' ? entry.amount : -entry.amount;
+        const newBalance = Number(account.balance) + balanceChange;
+
+        // Update account balance
+        const { error: updateError } = await supabase
+          .from('accounts')
+          .update({ balance: newBalance })
+          .eq('id', entry.accountId);
+
+        if (updateError) throw updateError;
       }
 
       await fetchTransactions();
