@@ -8,19 +8,22 @@ export function useAuth() {
 
   const ensureUserProfile = async (authUser: User) => {
     try {
-      // Check if user profile exists
+      // Check if user profile exists using maybeSingle() instead of single()
       const { data: profile } = await supabase
         .from('users')
         .select('id')
         .eq('id', authUser.id)
-        .single();
+        .maybeSingle();
 
       // If profile doesn't exist, create it
       if (!profile) {
-        await supabase.from('users').insert({
+        await supabase.from('users').upsert({
           id: authUser.id,
           email: authUser.email,
           name: authUser.email?.split('@')[0] || 'User', // Default name from email
+        }, {
+          onConflict: 'id',
+          ignoreDuplicates: true
         });
       }
     } catch (error) {
