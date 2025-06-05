@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Plus, Search, Filter } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Plus, Search } from 'lucide-react';
 import { Account } from '../types';
 import { accounts as mockAccounts } from '../data/mockData';
 import AccountCard from '../components/AccountCard';
@@ -16,6 +17,7 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const Accounts: React.FC = () => {
+  const { t } = useTranslation();
   const [accounts, setAccounts] = useState<Account[]>(mockAccounts);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<Account['type'] | 'all'>('all');
@@ -43,24 +45,24 @@ const Accounts: React.FC = () => {
   });
 
   const accountTypeOptions = [
-    { value: 'all', label: 'All Types' },
-    { value: 'asset', label: 'Assets' },
-    { value: 'liability', label: 'Liabilities' },
-    { value: 'equity', label: 'Equity' },
-    { value: 'revenue', label: 'Revenue' },
-    { value: 'expense', label: 'Expenses' },
+    { value: 'all', label: t('accounts.accountTypes.all') },
+    { value: 'asset', label: t('accounts.accountTypes.asset') },
+    { value: 'liability', label: t('accounts.accountTypes.liability') },
+    { value: 'equity', label: t('accounts.accountTypes.equity') },
+    { value: 'revenue', label: t('accounts.accountTypes.revenue') },
+    { value: 'expense', label: t('accounts.accountTypes.expense') },
   ];
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Accounts</h1>
-          <p className="text-muted-foreground">Manage your financial accounts</p>
+          <h1 className="text-2xl font-bold">{t('accounts.title')}</h1>
+          <p className="text-muted-foreground">{t('accounts.subtitle')}</p>
         </div>
         <Button>
           <Plus className="mr-1 h-4 w-4" />
-          Add Account
+          {t('accounts.addAccount')}
         </Button>
       </div>
       
@@ -70,7 +72,7 @@ const Accounts: React.FC = () => {
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="text"
-            placeholder="Search accounts..."
+            placeholder={t('accounts.searchAccounts')}
             className="pl-9"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -82,7 +84,7 @@ const Accounts: React.FC = () => {
           onValueChange={(value) => setFilterType(value as Account['type'] | 'all')}
         >
           <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select type" />
+            <SelectValue placeholder={t('accounts.accountTypes.all')} />
           </SelectTrigger>
           <SelectContent>
             {accountTypeOptions.map(option => (
@@ -98,8 +100,8 @@ const Accounts: React.FC = () => {
       {filteredAccounts.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-            <p className="text-lg font-medium">No accounts found</p>
-            <p className="text-muted-foreground">Try adjusting your search or filters</p>
+            <p className="text-lg font-medium">{t('accounts.noAccounts')}</p>
+            <p className="text-muted-foreground">{t('accounts.tryAdjusting')}</p>
           </CardContent>
         </Card>
       ) : (
@@ -125,11 +127,11 @@ const Accounts: React.FC = () => {
             <div className="mt-4 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">Type</p>
-                  <p className="font-medium capitalize">{selectedAccount.type}</p>
+                  <p className="text-sm text-muted-foreground">{t('transactions.type')}</p>
+                  <p className="font-medium capitalize">{t(`accounts.accountTypes.${selectedAccount.type}`)}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Balance</p>
+                  <p className="text-sm text-muted-foreground">{t('transactions.amount')}</p>
                   <p className="font-medium">
                     {formatCurrency(selectedAccount.balance, selectedAccount.currency)}
                   </p>
@@ -137,14 +139,14 @@ const Accounts: React.FC = () => {
               </div>
               
               <div>
-                <p className="text-sm text-muted-foreground">Created</p>
+                <p className="text-sm text-muted-foreground">{t('common.created')}</p>
                 <p className="font-medium">
                   {new Date(selectedAccount.createdAt).toLocaleDateString()}
                 </p>
               </div>
               
               <div>
-                <p className="text-sm text-muted-foreground">Last Updated</p>
+                <p className="text-sm text-muted-foreground">{t('common.lastUpdated')}</p>
                 <p className="font-medium">
                   {new Date(selectedAccount.updatedAt).toLocaleDateString()}
                 </p>
@@ -152,10 +154,10 @@ const Accounts: React.FC = () => {
               
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={() => setSelectedAccount(null)}>
-                  Close
+                  {t('common.close')}
                 </Button>
                 <Button>
-                  Edit Account
+                  {t('common.edit')}
                 </Button>
               </div>
             </div>

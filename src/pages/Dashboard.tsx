@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Wallet, TrendingUp, TrendingDown, DollarSign, PiggyBank, CreditCard, ArrowRight } from 'lucide-react';
 import DashboardCard from '../components/DashboardCard';
 import { dashboardSummary, transactions, accounts } from '../data/mockData';
@@ -8,6 +9,8 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 const Dashboard: React.FC = () => {
+  const { t } = useTranslation();
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -21,31 +24,31 @@ const Dashboard: React.FC = () => {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">Welcome to your financial overview</p>
+        <h1 className="text-2xl font-bold">{t('dashboard.title')}</h1>
+        <p className="text-muted-foreground">{t('dashboard.welcome')}</p>
       </div>
       
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <DashboardCard
-          title="Net Worth"
+          title={t('dashboard.netWorth')}
           value={formatCurrency(dashboardSummary.netWorth)}
           icon={<Wallet className="h-6 w-6" />}
           trend={{ value: 5.2, isPositive: true }}
         />
         <DashboardCard
-          title="Monthly Income"
+          title={t('dashboard.monthlyIncome')}
           value={formatCurrency(dashboardSummary.monthlyIncome)}
           icon={<TrendingUp className="h-6 w-6" />}
           trend={{ value: 2.1, isPositive: true }}
         />
         <DashboardCard
-          title="Monthly Expenses"
+          title={t('dashboard.monthlyExpenses')}
           value={formatCurrency(dashboardSummary.monthlyExpenses)}
           icon={<TrendingDown className="h-6 w-6" />}
           trend={{ value: 1.5, isPositive: false }}
         />
         <DashboardCard
-          title="Monthly Savings"
+          title={t('dashboard.monthlySavings')}
           value={formatCurrency(dashboardSummary.monthlySavings)}
           icon={<PiggyBank className="h-6 w-6" />}
           trend={{ value: 8.3, isPositive: true }}
@@ -57,10 +60,10 @@ const Dashboard: React.FC = () => {
         <Card>
           <CardHeader>
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Recent Transactions</h2>
+              <h2 className="text-lg font-semibold">{t('dashboard.recentTransactions')}</h2>
               <Button variant="link" asChild>
                 <Link to="/transactions" className="flex items-center">
-                  View all
+                  {t('common.viewAll')}
                   <ArrowRight className="ml-1 h-4 w-4" />
                 </Link>
               </Button>
@@ -79,7 +82,7 @@ const Dashboard: React.FC = () => {
                       {formatCurrency(transaction.entries[0].amount)}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {transaction.entries[0].type === 'debit' ? 'Debit' : 'Credit'}
+                      {transaction.entries[0].type === 'debit' ? t('transactions.debit') : t('transactions.credit')}
                     </p>
                   </div>
                 </div>
@@ -92,10 +95,10 @@ const Dashboard: React.FC = () => {
         <Card>
           <CardHeader>
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Top Accounts</h2>
+              <h2 className="text-lg font-semibold">{t('dashboard.topAccounts')}</h2>
               <Button variant="link" asChild>
                 <Link to="/accounts" className="flex items-center">
-                  View all
+                  {t('common.viewAll')}
                   <ArrowRight className="ml-1 h-4 w-4" />
                 </Link>
               </Button>
@@ -112,7 +115,7 @@ const Dashboard: React.FC = () => {
                     <div>
                       <p className="font-medium">{account.name}</p>
                       <p className="text-xs text-muted-foreground">
-                        {account.type.charAt(0).toUpperCase() + account.type.slice(1)}
+                        {t(`accounts.accountTypes.${account.type}`)}
                       </p>
                     </div>
                   </div>
@@ -129,12 +132,12 @@ const Dashboard: React.FC = () => {
       {/* Financial Summary */}
       <Card>
         <CardHeader>
-          <h2 className="text-lg font-semibold">Financial Summary</h2>
+          <h2 className="text-lg font-semibold">{t('dashboard.financialSummary')}</h2>
         </CardHeader>
         <CardContent>
           <div className="grid gap-6 md:grid-cols-2">
             <div>
-              <h3 className="mb-2 text-sm font-medium text-muted-foreground">Assets vs Liabilities</h3>
+              <h3 className="mb-2 text-sm font-medium text-muted-foreground">{t('dashboard.assetsVsLiabilities')}</h3>
               <div className="h-8 w-full overflow-hidden rounded-full bg-muted">
                 <div 
                   className="h-full bg-primary" 
@@ -145,18 +148,18 @@ const Dashboard: React.FC = () => {
               </div>
               <div className="mt-2 flex justify-between text-sm">
                 <div>
-                  <p className="font-medium">Assets</p>
+                  <p className="font-medium">{t('dashboard.assets')}</p>
                   <p className="text-muted-foreground">{formatCurrency(dashboardSummary.totalAssets)}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium">Liabilities</p>
+                  <p className="font-medium">{t('dashboard.liabilities')}</p>
                   <p className="text-muted-foreground">{formatCurrency(dashboardSummary.totalLiabilities)}</p>
                 </div>
               </div>
             </div>
             
             <div>
-              <h3 className="mb-2 text-sm font-medium text-muted-foreground">Income vs Expenses</h3>
+              <h3 className="mb-2 text-sm font-medium text-muted-foreground">{t('dashboard.incomeVsExpenses')}</h3>
               <div className="h-8 w-full overflow-hidden rounded-full bg-muted">
                 <div 
                   className="h-full bg-green-500" 
@@ -167,11 +170,11 @@ const Dashboard: React.FC = () => {
               </div>
               <div className="mt-2 flex justify-between text-sm">
                 <div>
-                  <p className="font-medium">Income</p>
+                  <p className="font-medium">{t('dashboard.income')}</p>
                   <p className="text-muted-foreground">{formatCurrency(dashboardSummary.monthlyIncome)}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium">Expenses</p>
+                  <p className="font-medium">{t('dashboard.expenses')}</p>
                   <p className="text-muted-foreground">{formatCurrency(dashboardSummary.monthlyExpenses)}</p>
                 </div>
               </div>
