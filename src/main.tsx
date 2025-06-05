@@ -14,7 +14,7 @@ import './index.css';
 
 const router = createBrowserRouter([
   {
-    element: <App />,
+    element: <AuthLayout />,
     children: [
       {
         path: 'login',
