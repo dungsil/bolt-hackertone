@@ -23,6 +23,7 @@
     "name": "Name",
     "signIn": "Sign in",
     "signUp": "Sign up",
+    "signOut": "Sign out",
     "signingIn": "Signing in...",
     "signingUp": "Signing up...",
     "noAccount": "Don't have an account?",

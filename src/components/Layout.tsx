@@ -1,16 +1,24 @@
-import React from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { BookOpenCheck, LayoutDashboard, Receipt, CreditCard, Menu, X } from 'lucide-react';
+import { BookOpenCheck, LayoutDashboard, Receipt, CreditCard, Menu, X, LogOut } from 'lucide-react';
 import { ModeToggle } from './mode-toggle';
 import { LanguageToggle } from './LanguageToggle';
 import { Button } from './ui/button';
 import { ThemeProvider } from './theme-provider';
+import { signOut } from '@/lib/auth';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const Layout: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { t } = useTranslation();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -18,6 +26,15 @@ const Layout: React.FC = () => {
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      navigate('/login');
+    } catch (error) {
+      console.error('Failed to log out:', error);
+    }
   };
 
   const navItems = [
@@ -57,6 +74,19 @@ const Layout: React.FC = () => {
             <div className="hidden items-center gap-4 md:flex">
               <LanguageToggle />
               <ModeToggle />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="icon">
+                    <LogOut className="h-[1.2rem] w-[1.2rem]" />
+                    <span className="sr-only">Logout</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={handleLogout}>
+                    {t('auth.signOut')}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </header>
@@ -86,6 +116,9 @@ const Layout: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <LanguageToggle />
                   <ModeToggle />
+                  <Button variant="outline" size="icon" onClick={handleLogout}>
+                    <LogOut className="h-[1.2rem] w-[1.2rem]" />
+                  </Button>
                 </div>
               </div>
             </div>

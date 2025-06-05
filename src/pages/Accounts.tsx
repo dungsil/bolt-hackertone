@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus, Search } from 'lucide-react';
-import { Account } from '../types';
-import { accounts as mockAccounts } from '../data/mockData';
+import { useAccounts } from '@/hooks/useAccounts';
 import AccountCard from '../components/AccountCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,17 +17,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 
 const Accounts: React.FC = () => {
   const { t } = useTranslation();
-  const [accounts, setAccounts] = useState<Account[]>(mockAccounts);
+  const { accounts, isLoading, error } = useAccounts();
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState<Account['type'] | 'all'>('all');
-  const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
-
-  const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency,
-    }).format(amount);
-  };
+  const [filterType, setFilterType] = useState<'all' | 'asset' | 'liability' | 'equity' | 'revenue' | 'expense'>('all');
+  const [selectedAccount, setSelectedAccount] = useState<typeof accounts[0] | null>(null);
 
   const filteredAccounts = accounts.filter(account => {
     // Apply search filter
@@ -81,7 +73,7 @@ const Accounts: React.FC = () => {
         
         <Select
           value={filterType}
-          onValueChange={(value) => setFilterType(value as Account['type'] | 'all')}
+          onValueChange={(value) => setFilterType(value as typeof filterType)}
         >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder={t('accounts.accountTypes.all')} />
@@ -97,24 +89,42 @@ const Accounts: React.FC = () => {
       </div>
       
       {/* Accounts Grid */}
-      {filteredAccounts.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-            <p className="text-lg font-medium">{t('accounts.noAccounts')}</p>
-            <p className="text-muted-foreground">{t('accounts.tryAdjusting')}</p>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredAccounts.map((account) => (
-            <AccountCard 
-              key={account.id} 
-              account={account} 
-              onClick={() => setSelectedAccount(account)}
-            />
-          ))}
-        </div>
-      )}
+      <Card className="overflow-hidden">
+        <CardContent className="relative min-h-[400px] p-6">
+          {isLoading ? (
+            <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+              <div className="text-center">
+                <div className="animate-spin h-8 w-8 rounded-full border-2 border-primary border-t-transparent"></div>
+                <p className="mt-2 text-sm text-muted-foreground">Loading accounts...</p>
+              </div>
+            </div>
+          ) : error ? (
+            <div className="flex h-full min-h-[400px] items-center justify-center">
+              <div className="text-center">
+                <p className="text-lg font-medium text-destructive">Error loading accounts</p>
+                <p className="text-muted-foreground">{error}</p>
+              </div>
+            </div>
+          ) : filteredAccounts.length === 0 ? (
+            <div className="flex h-full min-h-[400px] items-center justify-center">
+              <div className="text-center">
+                <p className="text-lg font-medium">{t('accounts.noAccounts')}</p>
+                <p className="text-muted-foreground">{t('accounts.tryAdjusting')}</p>
+              </div>
+            </div>
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredAccounts.map((account) => (
+                <AccountCard 
+                  key={account.id} 
+                  account={account} 
+                  onClick={() => setSelectedAccount(account)}
+                />
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
       
       {/* Account Details Dialog */}
       <Dialog open={selectedAccount !== null} onOpenChange={() => setSelectedAccount(null)}>
@@ -133,7 +143,10 @@ const Accounts: React.FC = () => {
                 <div>
                   <p className="text-sm text-muted-foreground">{t('transactions.amount')}</p>
                   <p className="font-medium">
-                    {formatCurrency(selectedAccount.balance, selectedAccount.currency)}
+                    {new Intl.NumberFormat('en-US', {
+                      style: 'currency',
+                      currency: selectedAccount.currency
+                    }).format(selectedAccount.balance)}
                   </p>
                 </div>
               </div>
@@ -141,14 +154,14 @@ const Accounts: React.FC = () => {
               <div>
                 <p className="text-sm text-muted-foreground">{t('common.created')}</p>
                 <p className="font-medium">
-                  {new Date(selectedAccount.createdAt).toLocaleDateString()}
+                  {selectedAccount.created_at.toLocaleDateString()}
                 </p>
               </div>
               
               <div>
                 <p className="text-sm text-muted-foreground">{t('common.lastUpdated')}</p>
                 <p className="font-medium">
-                  {new Date(selectedAccount.updatedAt).toLocaleDateString()}
+                  {selectedAccount.updated_at.toLocaleDateString()}
                 </p>
               </div>
               

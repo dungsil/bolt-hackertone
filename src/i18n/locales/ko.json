@@ -23,6 +23,7 @@
     "name": "이름",
     "signIn": "로그인",
     "signUp": "회원가입",
+    "signOut": "로그아웃",
     "signingIn": "로그인 중...",
     "signingUp": "가입 중...",
     "noAccount": "계정이 없으신가요?",
