@@ -7,6 +7,7 @@ import { ModeToggle } from './mode-toggle';
 import { LanguageToggle } from './LanguageToggle';
 import { Button } from './ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
+import App from '../App';
 
 const Layout: React.FC = () => {
   const location = useLocation();
@@ -29,76 +30,37 @@ const Layout: React.FC = () => {
   ];
 
   return (
-    <div className="flex min-h-screen flex-col">
-      {/* Header */}
-      <header className="sticky top-0 z-40 border-b bg-background">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-2">
-            <Link to="/" className="flex items-center gap-2 font-semibold text-primary">
-              <BookOpenCheck className="h-6 w-6" />
-              <span className="text-xl">Pawqar</span>
-            </Link>
-          </div>
-          
-          <div className="md:hidden">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleMobileMenu}
-              className="h-10 w-10"
-            >
-              {isMobileMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </Button>
-          </div>
-          
-          <div className="hidden items-center gap-4 md:flex">
-            <LanguageToggle />
-            <ModeToggle />
+    <App>
+      <div className="flex min-h-screen flex-col">
+        {/* Header */}
+        <header className="sticky top-0 z-40 border-b bg-background">
+          <div className="container mx-auto flex h-16 items-center justify-between px-4">
             <div className="flex items-center gap-2">
-              <Avatar>
-                {currentUser.avatar ? (
-                  <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
-                ) : (
-                  <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
-                )}
-              </Avatar>
-              <span className="text-sm font-medium">{currentUser.name}</span>
+              <Link to="/" className="flex items-center gap-2 font-semibold text-primary">
+                <BookOpenCheck className="h-6 w-6" />
+                <span className="text-xl">Pawqar</span>
+              </Link>
             </div>
-            <Button variant="outline" size="sm" className="flex items-center gap-1">
-              <LogOut className="h-4 w-4" />
-              <span>{t('common.logout')}</span>
-            </Button>
-          </div>
-        </div>
-      </header>
-      
-      {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-30 bg-black/50 md:hidden" onClick={closeMobileMenu}>
-          <div className="absolute right-0 top-16 h-[calc(100vh-4rem)] w-64 bg-background p-4" onClick={e => e.stopPropagation()}>
-            <nav className="flex flex-col gap-2">
-              {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium ${
-                    location.pathname === item.path
-                      ? 'bg-primary/10 text-primary'
-                      : 'text-foreground hover:bg-accent'
-                  }`}
-                  onClick={closeMobileMenu}
-                >
-                  {item.icon}
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
-            <div className="mt-4 border-t pt-4">
-              <div className="mb-2 flex items-center gap-2">
+            
+            <div className="md:hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleMobileMenu}
+                className="h-10 w-10"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="h-6 w-6" />
+                ) : (
+                  <Menu className="h-6 w-6" />
+                )}
+              </Button>
+            </div>
+            
+            <div className="hidden items-center gap-4 md:flex">
+              <LanguageToggle />
+              <ModeToggle />
+              <div className="flex items-center gap-2">
                 <Avatar>
                   {currentUser.avatar ? (
                     <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
@@ -108,26 +70,19 @@ const Layout: React.FC = () => {
                 </Avatar>
                 <span className="text-sm font-medium">{currentUser.name}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <LanguageToggle />
-                <ModeToggle />
-                <Button variant="outline" className="w-full justify-start gap-2">
-                  <LogOut className="h-4 w-4" />
-                  <span>{t('common.logout')}</span>
-                </Button>
-              </div>
+              <Button variant="outline" size="sm" className="flex items-center gap-1">
+                <LogOut className="h-4 w-4" />
+                <span>{t('common.logout')}</span>
+              </Button>
             </div>
           </div>
-        </div>
-      )}
-      
-      {/* Main Content */}
-      <div className="flex flex-1">
-        {/* Sidebar (desktop) */}
-        <aside className="hidden w-64 border-r bg-background md:block">
-          <div className="flex h-full flex-col">
-            <div className="flex-1 overflow-auto p-4">
-              <nav className="flex flex-col gap-1">
+        </header>
+        
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className="fixed inset-0 z-30 bg-black/50 md:hidden" onClick={closeMobileMenu}>
+            <div className="absolute right-0 top-16 h-[calc(100vh-4rem)] w-64 bg-background p-4" onClick={e => e.stopPropagation()}>
+              <nav className="flex flex-col gap-2">
                 {navItems.map((item) => (
                   <Link
                     key={item.path}
@@ -137,24 +92,72 @@ const Layout: React.FC = () => {
                         ? 'bg-primary/10 text-primary'
                         : 'text-foreground hover:bg-accent'
                     }`}
+                    onClick={closeMobileMenu}
                   >
                     {item.icon}
                     {item.label}
                   </Link>
                 ))}
               </nav>
+              <div className="mt-4 border-t pt-4">
+                <div className="mb-2 flex items-center gap-2">
+                  <Avatar>
+                    {currentUser.avatar ? (
+                      <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
+                    ) : (
+                      <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
+                    )}
+                  </Avatar>
+                  <span className="text-sm font-medium">{currentUser.name}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <LanguageToggle />
+                  <ModeToggle />
+                  <Button variant="outline" className="w-full justify-start gap-2">
+                    <LogOut className="h-4 w-4" />
+                    <span>{t('common.logout')}</span>
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
-        </aside>
+        )}
         
-        {/* Content */}
-        <main className="flex-1 overflow-auto bg-background">
-          <div className="container mx-auto p-6">
-            <Outlet />
-          </div>
-        </main>
+        {/* Main Content */}
+        <div className="flex flex-1">
+          {/* Sidebar (desktop) */}
+          <aside className="hidden w-64 border-r bg-background md:block">
+            <div className="flex h-full flex-col">
+              <div className="flex-1 overflow-auto p-4">
+                <nav className="flex flex-col gap-1">
+                  {navItems.map((item) => (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium ${
+                        location.pathname === item.path
+                          ? 'bg-primary/10 text-primary'
+                          : 'text-foreground hover:bg-accent'
+                      }`}
+                    >
+                      {item.icon}
+                      {item.label}
+                    </Link>
+                  ))}
+                </nav>
+              </div>
+            </div>
+          </aside>
+          
+          {/* Content */}
+          <main className="flex-1 overflow-auto bg-background">
+            <div className="container mx-auto p-6">
+              <Outlet />
+            </div>
+          </main>
+        </div>
       </div>
-    </div>
+    </App>
   );
 };
 
